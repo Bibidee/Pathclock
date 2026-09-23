@@ -13,7 +13,12 @@ function executionSucceeded(receipt:any){
   const consensus=receipt?.consensus_data||receipt?.consensusData;
   const leaders=consensus?.leader_receipt||consensus?.leaderReceipt;
   if(!Array.isArray(leaders)||leaders.length===0)return false;
-  return leaders.every((entry:any)=>String(entry?.execution_result||entry?.executionResult||"").toUpperCase()==="SUCCESS");
+  // GenLayer includes quorum-cancelled validator receipts alongside the
+  // authoritative leader receipt. Those validator entries may be ERROR with
+  // VALIDATOR_QUORUM_REACHED even when the contract execution succeeded.
+  const leader=leaders.find((entry:any)=>String(entry?.mode||"").toLowerCase()==="leader");
+  if(leader)return String(leader?.execution_result||leader?.executionResult||"").toUpperCase()==="SUCCESS";
+  return leaders.some((entry:any)=>String(entry?.execution_result||entry?.executionResult||"").toUpperCase()==="SUCCESS");
 }
 async function waitFinal(client:any,hash:string,watch:Watch){watch({phase:"CONSENSUS_RUNNING",hash});const accepted=await client.waitForTransactionReceipt({hash,status:"ACCEPTED" as any,retries:120,interval:3000});watch({phase:"ACCEPTED_PROVISIONAL",hash,receipt:accepted,message:"Consensus accepted this result, but it is not final."});let finalized:any;try{finalized=await client.waitForTransactionReceipt({hash,status:"FINALIZED" as any,retries:18,interval:3000})}catch{watch({phase:"READY_TO_FINALIZE",hash,receipt:accepted,message:"Appeal window complete or finalization is available."});watch({phase:"FINALIZING",hash});await client.finalizeTransaction({txId:hash});finalized=await client.waitForTransactionReceipt({hash,status:"FINALIZED" as any,retries:80,interval:3000})}if(!executionSucceeded(finalized))throw new Error("Transaction finalized but contract execution did not succeed.");watch({phase:"FINALIZED",hash,receipt:finalized});return finalized}
 async function waitTriggeredChildren(client:any,parentHash:string,watch:Watch){
