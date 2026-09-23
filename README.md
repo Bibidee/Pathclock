@@ -66,7 +66,7 @@ npm run build
 npm run dev
 ```
 
-The frontend builds even before live addresses are filled, but contract reads/writes are intentionally blocked with a clear configuration message until deployment addresses are supplied. The checked-in [`deployments/studionet.json`](deployments/studionet.json) records the fresh deployment from contract-source commit `b511b057fcdaf46c161a767c76431925029affe8`; do not replace these addresses without a fresh deployment.
+The frontend builds even before live addresses are filled, but contract reads/writes are intentionally blocked with a clear configuration message until deployment addresses are supplied. For local development, set the `NEXT_PUBLIC_*` values in `web/.env.local`; production values are configured in Vercel and should not be committed. The checked-in [`deployments/studionet.json`](deployments/studionet.json) records the fresh deployment from contract-source commit `b511b057fcdaf46c161a767c76431925029affe8`; do not replace these addresses without a fresh deployment.
 
 ## Deployment
 
@@ -80,6 +80,14 @@ genlayer network info
 ```
 
 Then deploy the three contracts in the order documented in `DEPLOYMENT_RUNBOOK.md`, bind the engine into `ReleaseAuthority`, prove a real end-to-end review, and place the resulting addresses in `web/.env.local` and `deployments/studionet.json`.
+
+### Production frontend on Vercel
+
+The production frontend is [the-pathlock.vercel.app](https://the-pathlock.vercel.app). The Vercel project is connected to `Bibidee/Pathclock`, uses `web/` as its Root Directory, and assigns `the-pathlock.vercel.app` to the Production environment. Pushes to `main` trigger Vercel deployments. The obsolete `pathlock-rho.vercel.app` alias is not assigned to the project.
+
+The latest verified Vercel deployment is [`dpl_4vkHDDr6iKfmpYqYqnYLquftM7rp`](https://vercel.com/bibidees-projects/pathlock/4vkHDDr6iKfmpYqYqnYLquftM7rp), marked Ready and built from `main` at `88fa5bc`. That trigger commit contains no source changes; it caused Vercel to build the previously pushed frontend fixes after the Git connection and `web/` root setting were corrected.
+
+GenLayer RPC reads can still intermittently return `Failed to fetch`; this is an upstream availability issue, not a successful contract result. The UI retries read calls, the release queue refreshes automatically and avoids showing an empty queue on read failure, and review/proof pages provide retry behavior while preserving any already loaded review data. A recovered read does not prove the RPC is continuously available.
 
 ## Submission rule
 
@@ -105,4 +113,4 @@ to generate immutable raw evidence URLs for the live proof. Replace the deployme
 
 ## Build verification performed in this handoff
 
-The verified checks for contract-source commit `b511b057fcdaf46c161a767c76431925029affe8` are `pytest -q` (77 passed), Python byte-compilation, `npm ci`, `npm run typecheck`, `npm run build`, and GenVM lint/SDK-backed validation for all three contracts using GenVM `v0.6.0-rc6` (newer-runner advisory only). GitHub Actions runs [35918896660](https://github.com/Bibidee/Pathclock/actions/runs/35918896660) and [35921670524](https://github.com/Bibidee/Pathclock/actions/runs/35921670524) passed. Live Studionet deployment and both positive and negative proof outcomes are in the manifest and [`FINAL_AUDIT_REPORT.md`](FINAL_AUDIT_REPORT.md). The web app is live at [the-pathlock.vercel.app](https://the-pathlock.vercel.app); its four routes return HTTP 200, and the app's GenLayer SDK/RPC read returned the expected proof data. The unwanted `pathlock-rho.vercel.app` alias has been removed. No measured fee profile is claimed; the wallet remains the final fee quote before signing.
+The verified contract checks for source commit `b511b057fcdaf46c161a767c76431925029affe8` are `pytest -q` (77 passed), Python byte-compilation, `npm ci`, `npm run typecheck`, `npm run build`, and GenVM lint/SDK-backed validation for all three contracts using GenVM `v0.6.0-rc6` (newer-runner advisory only). GitHub Actions runs [35918896660](https://github.com/Bibidee/Pathclock/actions/runs/35918896660) and [35921670524](https://github.com/Bibidee/Pathclock/actions/runs/35921670524) passed. The frontend RPC-recovery changes in commits `1b38ae5`, `e667a17`, and `6d2e913` also passed `npm run typecheck` and `npm run build`; they are included in the Ready Vercel deployment above. Live Studionet deployment and positive/negative proof evidence are recorded in the manifest and [`FINAL_AUDIT_REPORT.md`](FINAL_AUDIT_REPORT.md). No measured fee profile is claimed; the wallet remains the final fee quote before signing.
