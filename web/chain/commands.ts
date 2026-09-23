@@ -5,7 +5,16 @@ import type { TxPhase } from "@/domain/review/transitions";
 export type TxUpdate={phase:TxPhase;hash?:string;message?:string;receipt?:any};
 export type Watch=(u:TxUpdate)=>void;
 
-function executionSucceeded(receipt:any){const n=String(receipt?.txExecutionResultName||receipt?.executionResultName||receipt?.execution_result||"").toUpperCase();return ["FINISHED_WITH_RETURN","SUCCESS","OK","SUCCEEDED"].some(x=>n===x||n.includes(x))}
+function executionSucceeded(receipt:any){
+  const n=String(receipt?.txExecutionResultName||receipt?.executionResultName||receipt?.execution_result||"").toUpperCase();
+  if(["FINISHED_WITH_RETURN","SUCCESS","OK","SUCCEEDED"].some(x=>n===x||n.includes(x)))return true;
+  // Current GenLayer receipts expose the authoritative VM result inside
+  // consensus_data.leader_receipt rather than txExecutionResultName.
+  const consensus=receipt?.consensus_data||receipt?.consensusData;
+  const leaders=consensus?.leader_receipt||consensus?.leaderReceipt;
+  if(!Array.isArray(leaders)||leaders.length===0)return false;
+  return leaders.every((entry:any)=>String(entry?.execution_result||entry?.executionResult||"").toUpperCase()==="SUCCESS");
+}
 async function waitFinal(client:any,hash:string,watch:Watch){watch({phase:"CONSENSUS_RUNNING",hash});const accepted=await client.waitForTransactionReceipt({hash,status:"ACCEPTED" as any,retries:120,interval:3000});watch({phase:"ACCEPTED_PROVISIONAL",hash,receipt:accepted,message:"Consensus accepted this result, but it is not final."});let finalized:any;try{finalized=await client.waitForTransactionReceipt({hash,status:"FINALIZED" as any,retries:18,interval:3000})}catch{watch({phase:"READY_TO_FINALIZE",hash,receipt:accepted,message:"Appeal window complete or finalization is available."});watch({phase:"FINALIZING",hash});await client.finalizeTransaction({txId:hash});finalized=await client.waitForTransactionReceipt({hash,status:"FINALIZED" as any,retries:80,interval:3000})}if(!executionSucceeded(finalized))throw new Error("Transaction finalized but contract execution did not succeed.");watch({phase:"FINALIZED",hash,receipt:finalized});return finalized}
 async function waitTriggeredChildren(client:any,parentHash:string,watch:Watch){
   if(typeof client.getTriggeredTransactionIds!=="function") return;
