@@ -2,7 +2,7 @@
 
 Audit date: 2026-09-23  
 Baseline source commit: `6a9e4f851ee81006f53df82e27364d1805a40843`
-Current pass: uncommitted working-tree changes. Historical chain evidence below is from the previously deployed source commit and does not verify these changes.
+Current pass: validator-variance fix in progress. Historical chain evidence below does not verify the current source.
 
 ## Lifecycle model
 
@@ -25,7 +25,7 @@ Both AST lint and SDK-backed GenVM validation pass for all three contracts using
 
 ## Historical live evidence — prior source only
 
-The old manifest records positive review `0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07`, successful authorization child `0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30`, and inconclusive review `0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb`. These must not be represented as evidence for the modified contract source. No fresh review, child, adversarial origin, or consumption transaction was sent during this pass.
+The previous manifest records positive, child-authorization, and inconclusive proofs for the older contract set; those are historical and not evidence for the current source. A new-source positive attempt `0x3a752e0e38439adb3b49354839600cb95d25ae60a1f18756d3d201bb8cd5a0fd` finalized as `MAJORITY_DISAGREE`; public state reads returned no review or authority record. It must not be described as a successful positive or negative review. No positive proof exists yet for the current source.
 
 ## Remaining release gates
 

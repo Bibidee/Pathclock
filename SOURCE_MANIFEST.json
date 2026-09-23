@@ -1,7 +1,7 @@
 {
   "contracts/PatchReviewEngine.py": {
-    "bytes": 17664,
-    "sha256": "c1334c2a3bd8264e55cc70b9f462f381792df1bb0fa9c628391842419f3e59d3"
+    "bytes": 17841,
+    "sha256": "e40833b8cb35f36adef4898342ba2ed0b95093d5eb5d1b0a171b0c15567aaed2"
   },
   "contracts/ReleaseAuthority.py": {
     "bytes": 4966,

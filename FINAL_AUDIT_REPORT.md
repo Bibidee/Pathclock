@@ -3,7 +3,7 @@
 Audit date: 2026-09-23  
 Repository: https://github.com/Bibidee/Pathclock  
 Baseline commit: `6a9e4f851ee81006f53df82e27364d1805a40843`
-Current source: uncommitted working-tree changes; no final source SHA exists yet.
+Current source: validator-variance fix is being tested; the final source SHA does not yet exist.
 
 ## Release decision
 
@@ -22,7 +22,7 @@ Current source: uncommitted working-tree changes; no final source SHA exists yet
 
 ## Historical live evidence (not evidence for current modified contracts)
 
-`deployments/studionet.json` records the prior deployment and positive/negative proof transactions from source commit `556afcd0ebdd2ff4153b0aa2502c9e4265b9fea1`. Those records remain historical facts only. Because this pass changes `RemediationRegistry.py` and `PatchReviewEngine.py`, all three contracts must be redeployed as one new set, rebound, and re-proved before those addresses can represent this source. No new live transaction has been sent in this pass.
+`deployments/studionet.json` records a prior deployment from source commit `556afcd0ebdd2ff4153b0aa2502c9e4265b9fea1`. A fresh three-contract set was deployed from commit `1ad2978d7ea31d23f5fa3a5d1dca0a36f601f7cd`; its positive review ended in `MAJORITY_DISAGREE` and created no review or authorization state. A validator-variance fix is now being made to that engine source, so another full three-contract deployment, binding, and fresh proof set is mandatory. These earlier proofs/addresses are not evidence for the current working tree.
 
 The previously recorded Vercel URL `https://pathlock-rho.vercel.app` is likewise not verified against the current source commit. Do not cite the old CI run or deployment inspection as current release evidence.
 

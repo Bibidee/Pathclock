@@ -179,9 +179,11 @@ def test_validator_reconstructs_fresh_evidence_and_compares_decision_fields(dire
     assert direct_vm.run_validator() is True
     stored = get_record(engine, "review-positive")
     assert direct_vm.run_validator(leader_result=dict(stored, outcome="NOT_REMEDIATED")) is False
+    assert direct_vm.run_validator(leader_result=dict(stored, requirement_satisfied=False)) is False
     assert direct_vm.run_validator(leader_result=dict(stored, evidence_conflicts=["tampered"])) is False
     assert direct_vm.run_validator(leader_result=dict(stored, source_digests={"patch": "tampered"})) is False
-    assert direct_vm.run_validator(leader_result=dict(stored, material_findings=["tampered"])) is False
+    # Free-form explanatory prose is not decision-bearing consensus data.
+    assert direct_vm.run_validator(leader_result=dict(stored, material_findings=["different phrasing"])) is True
 
 
 def test_validator_rejects_evidence_that_changed_since_leader_evaluation(direct_vm, direct_alice, review_engine):

@@ -327,9 +327,11 @@ Evaluate substantive correctness. Return only JSON with exactly these semantic f
             for field in material:
                 if leader.get(field) != own.get(field):
                     return False
-            for field in ("material_findings", "source_digests"):
-                if leader.get(field) != own.get(field):
-                    return False
+            # Findings are explanatory model prose, not a consensus field; exact
+            # wording can vary while the independently checked decision matches.
+            # Evidence commitments remain byte-for-byte identical.
+            if leader.get("source_digests") != own.get("source_digests"):
+                return False
             # A REMEDIATED leader result must independently satisfy every invariant.
             if leader.get("outcome") == "REMEDIATED":
                 if leader.get("source_unavailable"):
