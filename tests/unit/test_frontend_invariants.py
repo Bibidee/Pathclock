@@ -1,9 +1,17 @@
 from pathlib import Path
+import os
 ROOT=Path(__file__).resolve().parents[2]
 WEB=ROOT/'web'
 
 def all_text():
-    return '\n'.join(p.read_text(encoding='utf-8', errors='ignore') for p in WEB.rglob('*') if p.is_file() and p.suffix in {'.ts','.tsx','.css','.md'})
+    chunks=[]
+    for folder,dirs,files in os.walk(WEB):
+        dirs[:]=[name for name in dirs if name not in {'node_modules','.next','.turbo','coverage','out'}]
+        for name in files:
+            path=Path(folder)/name
+            if path.suffix in {'.ts','.tsx','.css','.md'}:
+                chunks.append(path.read_text(encoding='utf-8', errors='ignore'))
+    return '\n'.join(chunks)
 
 def test_exact_public_page_route_set():
     routes=[]

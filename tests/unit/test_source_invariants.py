@@ -31,8 +31,8 @@ def test_no_format_only_validation_language():
 
 def test_finality_gated_authorization():
     src = read("PatchReviewEngine.py")
-    assert 'emit(on="finalized").authorize' in src
-    assert 'emit(on="accepted").authorize' not in src
+    assert 'authority.emit(on="finalized").authorize' in src
+    assert 'authority.emit(on="accepted").authorize' not in src
 
 
 def test_explicit_inconclusive_path():
@@ -51,13 +51,16 @@ def test_validator_compares_conflict_commitment():
     assert '"evidence_digest"' in src
     assert '"source_unavailable"' in src
 
-def test_private_network_guards_cover_rfc1918_ranges():
+def test_public_origin_validation_covers_private_and_nonroutable_hosts():
     registry = read("RemediationRegistry.py")
     engine = read("PatchReviewEngine.py")
     for src in (registry, engine):
-        assert 'host.startswith("10.")' in src
-        assert 'host.startswith("172.")' in src
-        assert 'host.startswith("192.168.")' in src
+        assert 'first not in (0, 10, 127)' in src
+        assert 'first < 224' in src
+        assert 'first == 172 and 16 <= second <= 31' in src
+        assert 'first == 192 and (second == 0 or second == 168 or second == 88)' in src
+        assert 'trailing-dot host not allowed' in src
+        assert 'IPv6 host not allowed' in src
 
 
 def test_registry_has_no_spec_mutation_method():

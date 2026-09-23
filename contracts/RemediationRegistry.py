@@ -4,6 +4,7 @@
 import hashlib
 import json
 import datetime
+import re
 from genlayer import *
 
 
@@ -19,16 +20,49 @@ def _bounded(value: str, field: str, minimum: int, maximum: int) -> str:
     return clean
 
 
-def _https_url(value: str, field: str) -> str:
+def _https_url(value: str, field: str, origin_only: bool = False) -> str:
     clean = _bounded(value, field, 12, 800)
-    _require(clean.startswith("https://"), f"{field} must use https")
-    _require("@" not in clean.split("/", 3)[2], f"{field} credentials not allowed")
-    host = clean.split("/", 3)[2].lower()
-    _require(host not in ("localhost", "127.0.0.1", "0.0.0.0", "::1"), f"{field} local host not allowed")
-    _require(not host.startswith("10."), f"{field} private host not allowed")
-    _require(not host.startswith("192.168."), f"{field} private host not allowed")
-    _require(not host.startswith("172.") or not 16 <= int(host.split(".")[1]) <= 31, f"{field} private host not allowed")
-    return clean
+    _require(clean == clean.strip() and "\\" not in clean, f"{field} URL malformed")
+    _require(all(ord(char) > 32 and ord(char) != 127 for char in clean), f"{field} URL contains control/space characters")
+    match = re.match(r"^https://([^/?#]+)(/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$", clean, re.IGNORECASE)
+    _require(match is not None, f"{field} must be a valid https URL")
+    authority = match.group(1)
+    _require("@" not in authority, f"{field} credentials not allowed")
+    _require(":" not in authority, f"{field} custom ports not allowed")
+    host = authority.lower()
+    _require(not host.endswith("."), f"{field} trailing-dot host not allowed")
+    _require(len(host) <= 253 and "." in host, f"{field} public hostname required")
+    _require(not host.startswith("[") and ":" not in host, f"{field} IPv6 host not allowed")
+    is_ipv4 = bool(re.fullmatch(r"[0-9.]+", host))
+    if is_ipv4:
+        parts = host.split(".")
+        _require(len(parts) == 4 and all(part.isdigit() and 0 <= int(part) <= 255 for part in parts), f"{field} malformed IP address")
+        first = int(parts[0])
+        second = int(parts[1])
+        _require(first not in (0, 10, 127) and first < 224 and not (first == 100 and 64 <= second <= 127) and not (first == 169 and second == 254) and not (first == 172 and 16 <= second <= 31) and not (first == 192 and (second == 0 or second == 168 or second == 88)) and not (first == 198 and second in (18, 19, 51)) and not (first == 203 and second == 0 and parts[2] == "113"), f"{field} non-public host not allowed")
+    else:
+        labels = host.split(".")
+        _require(all(re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", label) for label in labels), f"{field} malformed hostname")
+        _require(all(label not in ("localhost", "local", "internal", "test", "invalid") for label in labels), f"{field} non-public host not allowed")
+    path = match.group(2) or ""
+    if origin_only:
+        _require(path == "", f"{field} must be an https origin without path")
+        _require("?" not in clean and "#" not in clean, f"{field} must not contain query or fragment")
+    return "https://" + host + clean[len("https://" + authority):]
+
+
+_REQUIRED_EVIDENCE = ("advisory", "patch", "tests", "deployment")
+
+
+def _validated_policy(policy: dict) -> dict:
+    _require(set(policy.keys()) == {"required", "version"}, "evidence policy fields invalid")
+    _require(policy.get("version") == 1, "unsupported evidence policy version")
+    required = policy.get("required")
+    _require(isinstance(required, list), "evidence policy required must be an array")
+    _require(all(isinstance(item, str) for item in required), "evidence policy categories must be strings")
+    _require(len(required) == len(_REQUIRED_EVIDENCE), "evidence policy must require all supported categories")
+    _require(set(required) == set(_REQUIRED_EVIDENCE), "evidence policy contains unsupported or missing categories")
+    return {"required": list(_REQUIRED_EVIDENCE), "version": 1}
 
 
 def _canonical_json(data: dict) -> str:
@@ -76,16 +110,14 @@ class RemediationRegistry(gl.Contract):
             raise gl.vm.UserError("policy/origins must be valid JSON")
 
         _require(isinstance(policy, dict), "evidence policy must be an object")
+        policy = _validated_policy(policy)
         _require(isinstance(origins, list), "allowed origins must be an array")
         _require(1 <= len(origins) <= 8, "allowed origins must contain 1-8 entries")
 
         normalized_origins = []
         for origin in origins:
             _require(isinstance(origin, str), "origin must be a string")
-            o = _https_url(origin.rstrip("/"), "allowed_origin")
-            o = "https://" + o.split("/", 3)[2].lower()
-            # Origins must not contain a path beyond the host.
-            _require(o.count("/") == 2, "allowed_origin must be an https origin without path")
+            o = _https_url(origin, "allowed_origin", origin_only=True)
             if o not in normalized_origins:
                 normalized_origins.append(o)
         _require(len(normalized_origins) == len(origins), "duplicate allowed origin")

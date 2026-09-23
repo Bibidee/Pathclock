@@ -29,5 +29,7 @@
     "finalizeTx": "0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07",
     "authorizationChildTx": "0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30",
     "negativeReviewTx": "0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb"
-  }
+  },
+  "releaseStatus": "historical deployment only; contract source changes in the current working tree require a fresh complete deployment and new proofs before these addresses can represent the source",
+  "currentSourceVerifiedOnChain": false
 }

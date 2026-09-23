@@ -1,74 +1,45 @@
-# PATHCLOCK FINAL AUDIT REPORT
+# PATHCLOCK FINAL RELEASE STATUS
 
 Audit date: 2026-09-23  
 Repository: https://github.com/Bibidee/Pathclock  
-Audited source commit: `556afcd0ebdd2ff4153b0aa2502c9e4265b9fea1`
+Baseline commit: `6a9e4f851ee81006f53df82e27364d1805a40843`
+Current source: uncommitted working-tree changes; no final source SHA exists yet.
 
-## 1. Executive summary
+## Release decision
 
-Pathclock is submission-grade for the verified Studionet demo path. The Direct Mode fixture failure was traced to pytest plugin startup: `gltest` was starting a localnet configuration plugin during normal collection. The repository now disables that configuration plugin by default while retaining the Direct Mode fixture plugin, making `pytest -q` deterministic. Contracts, frontend, CI, deployment manifest, canonical proof, and release documentation were audited and corrected.
+**Submission ready: NO.** This pass improves frozen evidence-policy enforcement, origin validation, behavioral Direct Mode coverage, and authorization-consumption UX. Contract sources changed, which supersedes the historical deployment. A clean local build and tests do not replace fresh Studionet deployments/proofs, GitHub CI on the final commit, or a production Vercel build from that commit.
 
-## 2. Readiness score
+## Verified locally
 
-- Before audit: approximately 76%.
-- After audit: 93% for the verified demo/submission path.
-
-The remaining 7% is operational: no video artifact, no RPC-exposed fee profile, and the requested Vercel alias is unavailable to this account.
-
-## 3. Fixed issues
-
-- `pytest.ini` now prevents an unnecessary localnet startup; `pytest -q` passes 26 tests.
-- GenLayer timestamp usage and Address/string normalization were corrected in the deployed source.
-- Evidence-origin/private-network protections and validator conflict comparison were added.
-- Finality-gated authorization and exact-once authorization/consumption guards are enforced.
-- Next.js was upgraded to 16.3.6; clean dependency install, typecheck, and production build pass.
-- README and submission checklist now match the actual release packet.
-- `deployments/studionet.json` contains `canonicalProof`.
-
-## 4. Security assessment
-
-### Findings fixed
-
-- Severity: Medium. Private or loopback evidence could be environment-dependent. Location: `contracts/RemediationRegistry.py`. Fix: reject loopback/RFC1918 hosts and enforce bounded HTTPS origins.
-- Severity: Medium. Leader/validator disagreement on material fields could be accepted. Location: `contracts/PatchReviewEngine.py`. Fix: independent reconstruction, substantive-field comparison, and `INCONCLUSIVE` on unavailable/contradictory evidence.
-- Severity: Medium. Provisional acceptance could be mistaken for release authorization. Location: review engine, authority, and review-room UI. Fix: authorization only on `on="finalized"`; UI labels provisional state and rereads authority state.
-
-### Residual risks
-
-- `ReleaseAuthority` has a single admin for one-time engine binding. This is an explicit demo trust assumption; production should use a multisig or timelock before holding material release authority.
-- Evidence URLs are public mutable locations. Frozen URLs and returned digests are persisted, with unavailable evidence failing closed to `INCONCLUSIVE`.
-- No full adversarial multi-validator simulation is included; live positive/negative proof plus unit/Direct Mode coverage are the verified evidence.
-
-## 5. Test results
-
-- `pytest -q`: **28 passed**, 0 failed.
-- All three contract lint checks and schema generation pass.
-- `cd web && npm ci`: passed.
+- `pytest -q`: **77 passed**, 0 failed (20 unit + 57 Direct Mode).
+- Python byte-compilation: all three contract files pass.
+- `cd web && npm ci`: passed (251 packages installed).
 - `npm run typecheck`: passed.
-- `npm run build`: passed with Next.js 16.3.6.
-- GitHub CI for the pushed audit commit: [successful run](https://github.com/Bibidee/Pathclock/actions/runs/35842300651).
+- `npm run build`: passed; routes generated for `/`, `/console`, `/release/[reviewKey]`, `/proof/[receiptKey]`.
+- `genvm-lint check`: **passed for all three contracts** using GenVM `v0.6.0-rc6`; advisory: a newer runner is available.
+- GitHub CI: **not run on these changes**. Local `gh auth status` reports the configured token is invalid.
+- Vercel: **not deployed from these changes**. Vercel CLI is authenticated as `bibidee`, but inspection confirms the requested `pathlock.vercel.app` domain is inaccessible under the linked team; the current project alias is `pathlock-rho.vercel.app`.
 
-## 6. Deployment verification
+## Historical live evidence (not evidence for current modified contracts)
 
-Network: Studionet, chain 61999. Explorer: https://explorer-studio.genlayer.com
+`deployments/studionet.json` records the prior deployment and positive/negative proof transactions from source commit `556afcd0ebdd2ff4153b0aa2502c9e4265b9fea1`. Those records remain historical facts only. Because this pass changes `RemediationRegistry.py` and `PatchReviewEngine.py`, all three contracts must be redeployed as one new set, rebound, and re-proved before those addresses can represent this source. No new live transaction has been sent in this pass.
 
-- [RemediationRegistry](https://explorer-studio.genlayer.com/address/0xaB74Da9C0124101e8c89428318b417272Ac4a464) — `0xaB74Da9C0124101e8c89428318b417272Ac4a464`
-- [ReleaseAuthority](https://explorer-studio.genlayer.com/address/0xF0391b24215F259918752B22B9F6CA2B359e5Fe) — `0xF0391b24215F259918752B22B9F6CA2B359e5Fe`
-- [PatchReviewEngine](https://explorer-studio.genlayer.com/address/0xe2193869cb366fDdEdAE0C54ccAe03f708ec7b28) — `0xe2193869cb366fDdEdAE0C54ccAe03f708ec7b28`
-- Engine binding tx: `0xe3e064dfaa1c481889b7492a00c782828cbc24a78dcf30a4cd71c3983c724745`
-- Immutable evidence commit: [`be03b2669328b5a3bccc9c1b795a18df509ab527`](https://github.com/Bibidee/Pathclock/tree/be03b2669328b5a3bccc9c1b795a18df509ab527/demo_fixture/evidence)
-- Positive review: `0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07` → `REMEDIATED`
-- Authorization child: `0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30` → finalized successfully
-- Negative/inconclusive review: `0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb` → `INCONCLUSIVE`, no authorization
-- Vercel production: [pathlock-rho.vercel.app](https://pathlock-rho.vercel.app)
-- Vercel inspection: [deployment](https://vercel.com/bibidees-projects/pathlock/4iXatEdysHUbWteCnj3F6LvuDy89)
+The previously recorded Vercel URL `https://pathlock-rho.vercel.app` is likewise not verified against the current source commit. Do not cite the old CI run or deployment inspection as current release evidence.
 
-## 7. Limitations
+## Security work in this pass
 
-Studionet transaction objects inspected for deployment, freeze, review, and child authorization did not expose gas-price or fee fields; no fee number is invented. The exact `pathlock.vercel.app` alias is assigned to another Vercel project. No demo video is included.
+- Freeze-time and evaluation-time evidence policy is bounded to version 1 and exactly four supported categories: advisory, patch, tests, deployment.
+- Evidence origin parsing rejects credentials, custom ports, IPv6 literals, malformed/internal/single-label hosts, trailing-dot hostnames, and selected non-public IPv4 ranges; normalized origins are compared exactly.
+- Direct Mode exercises outcome reconstruction, hostile/missing/conflicting evidence, invalid origins, validator disagreements, replay/identity cases, and finality-only authorization behavior.
+- Authorization consumption now has an owner/network guard, SDK-supported write simulation preflight, finality state display, and post-finalization authority reread. The owner wallet is expected to present the actual fee before signing; this code does not claim a measured fee estimate.
 
-## 8. Submission conclusion
+## Remaining release blockers
 
-An external reviewer can clone the repository, install dependencies, run tests/build, inspect the manifest, replay the immutable evidence commit, inspect explorer records, and open the verified Vercel deployment. The remaining limitations are explicit and do not change the verified positive/negative authorization behavior.
+1. Commit the finished source and documentation; record the final SHA.
+2. Redeploy registry, authority, and engine; configure the new engine; verify each transaction is FINALIZED.
+3. Produce fresh immutable positive and negative/inconclusive proofs plus a deterministic disallowed-origin failure proof; optionally exercise consumption on a second positive review.
+4. Restore GitHub authentication, push the final commit, and verify its CI run.
+5. Decide whether to use the accessible `pathlock-rho.vercel.app` alias or restore access to `pathlock.vercel.app`; deploy `web` from the final source SHA and verify all public routes and wallet/network states.
+6. Update the deployment manifest and this report with only those fresh, independently checked values.
 
-The separate full lifecycle trace, including the distinction between implemented and non-existent remediation/proof stages, is in [FULL_LIFECYCLE_AUDIT_REPORT.md](FULL_LIFECYCLE_AUDIT_REPORT.md).
+No readiness percentage is assigned while these gates remain open. The detailed stage mapping is in [FULL_LIFECYCLE_AUDIT_REPORT.md](FULL_LIFECYCLE_AUDIT_REPORT.md).

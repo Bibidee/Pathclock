@@ -1,6 +1,6 @@
 "use client";
-import { DEPLOYMENT, requireDeployment } from "./deployment";
-import { walletClient } from "./genlayer-client";
+import { DEPLOYMENT, NETWORK, requireDeployment } from "./deployment";
+import { provider, walletClient } from "./genlayer-client";
 import type { TxPhase } from "@/domain/review/transitions";
 export type TxUpdate={phase:TxPhase;hash?:string;message?:string;receipt?:any};
 export type Watch=(u:TxUpdate)=>void;
@@ -50,7 +50,9 @@ async function waitTriggeredChildren(client:any,parentHash:string,watch:Watch){
     watch({phase:"FINALIZED",hash:child,receipt,message:"Release-authority child transaction finalized."});
   }
 }
-async function write(address:string,account:string,functionName:string,args:any[],watch:Watch,followChildren=false){requireDeployment();const client:any=walletClient(account);watch({phase:"AWAITING_SIGNATURE"});const call={address,functionName,args,value:0n};let estimate:any;try{estimate=await client.estimateTransactionFeesForWrite(call)}catch{}const fees=estimate?{distribution:estimate.distribution,feeValue:estimate.feeValue}:undefined;const hash=await client.writeContract({...call,...(fees?{fees}:{})});watch({phase:"SUBMITTED",hash});const finalized=await waitFinal(client,hash,watch);if(followChildren)await waitTriggeredChildren(client,hash,watch);return finalized}
-export async function freezeSpec(account:string,input:{specId:string;repositoryUrl:string;advisoryUrl:string;securityRequirement:string;baselineRef:string;allowedOrigins:string[]},watch:Watch){return write(DEPLOYMENT.registry,account,"freeze_spec",[input.specId,input.repositoryUrl,input.advisoryUrl,input.securityRequirement,input.baselineRef,JSON.stringify({required:["patch","tests","deployment"],version:1}),JSON.stringify(input.allowedOrigins)],watch)}
+async function assertWallet(account:string){requireDeployment();const injected=provider();if(!injected)throw new Error("Injected wallet not found.");const [accounts,chainHex]=await Promise.all([injected.request({method:"eth_accounts"}),injected.request({method:"eth_chainId"})]);if(Number.parseInt(chainHex,16)!==NETWORK.chainId)throw new Error("Switch to GenLayer Studionet before submitting this transaction.");if(!accounts?.[0]||accounts[0].toLowerCase()!==account.toLowerCase())throw new Error("The connected wallet changed. Reconnect the expected account before submitting.");return walletClient(account)}
+async function write(address:string,account:string,functionName:string,args:any[],watch:Watch,followChildren=false){const client:any=await assertWallet(account);const call={address,functionName,args,value:0n};watch({phase:"AWAITING_SIGNATURE"});const hash=await client.writeContract(call);watch({phase:"SUBMITTED",hash});const finalized=await waitFinal(client,hash,watch);if(followChildren)await waitTriggeredChildren(client,hash,watch);return finalized}
+export async function estimateAuthorizationConsumption(account:string,reviewKey:string){const client:any=await assertWallet(account);return client.simulateWriteContract({address:DEPLOYMENT.authority,functionName:"consume_authorization",args:[reviewKey]})}
+export async function freezeSpec(account:string,input:{specId:string;repositoryUrl:string;advisoryUrl:string;securityRequirement:string;baselineRef:string;allowedOrigins:string[]},watch:Watch){return write(DEPLOYMENT.registry,account,"freeze_spec",[input.specId,input.repositoryUrl,input.advisoryUrl,input.securityRequirement,input.baselineRef,JSON.stringify({required:["advisory","patch","tests","deployment"],version:1}),JSON.stringify(input.allowedOrigins)],watch)}
 export async function reviewCandidate(account:string,input:{reviewKey:string;specId:string;candidateVersion:string;candidateCommit:string;patchUrl:string;testsUrl:string;deploymentUrl:string},watch:Watch){return write(DEPLOYMENT.reviewEngine,account,"review_candidate",[input.reviewKey,input.specId,input.candidateVersion,input.candidateCommit,input.patchUrl,input.testsUrl,input.deploymentUrl],watch,true)}
 export async function consumeAuthorization(account:string,reviewKey:string,watch:Watch){return write(DEPLOYMENT.authority,account,"consume_authorization",[reviewKey],watch)}

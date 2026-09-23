@@ -1,14 +1,14 @@
 {
   "contracts/PatchReviewEngine.py": {
-    "bytes": 15514,
-    "sha256": "a70247695f1b9f040f1165ea9c6be9165319776bc38a9c0d98a5554b0d5824cb"
+    "bytes": 17664,
+    "sha256": "c1334c2a3bd8264e55cc70b9f462f381792df1bb0fa9c628391842419f3e59d3"
   },
   "contracts/ReleaseAuthority.py": {
     "bytes": 4966,
     "sha256": "74d79619a2b203bf15f4fc0e4bf4e81af369f78ca7bcf3995d054c7df1f6a544"
   },
   "contracts/RemediationRegistry.py": {
-    "bytes": 5189,
-    "sha256": "5caebe853bf53b9238656bb4c7a3df72d3a343b38b75a8134c94a457ae1dff06"
+    "bytes": 7449,
+    "sha256": "9709eb4e501f6d286fb068219f7f0c76b9933c794ded123d99240f7f3b50d997"
   }
 }

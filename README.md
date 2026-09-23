@@ -49,21 +49,24 @@ Python 3.12+ is recommended for GenLayer testing tooling.
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-pytest tests/direct -q
+python -m py_compile contracts/*.py
+pytest -q
+genvm-lint check contracts/RemediationRegistry.py
+genvm-lint check contracts/PatchReviewEngine.py
+genvm-lint check contracts/ReleaseAuthority.py
 ```
 
 Frontend:
 
 ```bash
 cd web
-cp .env.example .env.local
-npm install
+npm ci
 npm run typecheck
 npm run build
 npm run dev
 ```
 
-The frontend builds even before live addresses are filled, but contract writes/reads are intentionally blocked with a clear configuration message until deployment addresses are supplied. This handoff includes a local ignored `web/.env.local` containing the verified Studionet addresses; production hosting variables are not included.
+The frontend builds even before live addresses are filled, but contract writes/reads are intentionally blocked with a clear configuration message until deployment addresses are supplied. The checked-in manifest contains historical Studionet addresses for the older contract source; because this working-tree pass changes contracts, do not use those addresses as a deployment of the current source. Local/production environment files must be updated only after a fresh deployment.
 
 ## Deployment
 
@@ -102,4 +105,4 @@ to generate immutable raw evidence URLs for the live proof. Replace the deployme
 
 ## Build verification performed in this handoff
 
-The frontend dependency lockfile is committed. `npm ci`, `npm run typecheck`, and `npm run build` pass for the web project. Python 3.12, the pinned GenLayer packages, and `genvm-lint` are used for verification; all 26 unit and Direct Mode tests pass, and all contract lint checks pass. The three corrected contract sources are deployed and finalized on Studionet and the engine binding is finalized; live addresses, transaction hashes, canonical positive/negative proof transactions, CI, and Vercel links are recorded in `deployments/studionet.json` and `FINAL_AUDIT_REPORT.md`. A per-transaction measured fee profile is not available because the Studionet RPC responses expose no gas-price or fee fields.
+The latest local pass on this working tree is `pytest -q` (77 passed), Python byte-compilation, `npm ci`, `npm run typecheck`, and `npm run build`. All three contracts pass GenVM AST lint and SDK-backed validation using cached GenVM `v0.6.0-rc6`; the linter notes a newer runner is available. This release pass changes contract sources, so the historical addresses and proofs in `deployments/studionet.json` are not proofs of this source. A fresh three-contract deployment, binding, new live proofs, current GitHub CI, and a Vercel deploy of this commit remain required. GitHub CLI authentication is invalid. Vercel CLI is authenticated, but the requested `pathlock.vercel.app` domain is not accessible under the linked Vercel account; the existing project alias is `pathlock-rho.vercel.app`. No measured transaction fee profile is claimed; the owner wallet is the final fee quote before signing.
