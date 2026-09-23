@@ -20,19 +20,28 @@ const checks = (bundle: ReviewBundle) => [
 export function ReviewRoomScreen({ reviewKey }: { reviewKey: string }) {
   const [data, setData] = useState<ReviewBundle | null>(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [drawer, setDrawer] = useState(false);
   async function load() {
-    try { setData(await getReviewBundle(reviewKey)); setError(""); }
-    catch (reason: any) { setError(reason?.message || "Unable to read review."); }
+    setLoading(true);
+    try {
+      const bundle = await getReviewBundle(reviewKey);
+      if (!bundle) throw new Error("This review could not be found on Studionet.");
+      setData(bundle);
+      setError("");
+    } catch (reason: any) {
+      setError(reason?.message || "Unable to read this review from Studionet. Check your connection and retry.");
+    } finally { setLoading(false); }
   }
   useEffect(() => { void load(); const timer = setInterval(load, 12000); return () => clearInterval(timer); }, [reviewKey]);
-  if (error) return <div className="page-shell"><div className="error-box">{error}</div></div>;
+  if (!data && error) return <div className="page-shell"><header className="mast"><Link className="wordmark" href="/"><img src="/mark.svg" alt=""/>PATHCLOCK</Link><IdentityChip/></header><div className="error-box">{error}</div><button className="secondary-action" onClick={() => void load()} disabled={loading}>{loading ? "Retrying…" : "Try again"}</button><p className="technical">The page will also retry automatically.</p></div>;
   if (!data) return <div className="loading">Reading review room…</div>;
   const { review, spec, authorization } = data;
   const hasFinality = !!authorization;
   return <div className="page-shell">
     <header className="mast"><Link className="wordmark" href="/"><img src="/mark.svg" alt=""/>PATHCLOCK</Link><IdentityChip/></header>
     <main className="room">
+      {error && <div className="error-box" role="status">Couldn’t refresh the latest chain state. Showing the last loaded review. <button className="quiet-button" onClick={() => void load()} disabled={loading}>{loading ? "Retrying…" : "Retry now"}</button></div>}
       <div className="room-nav"><Link href="/console">← Release queue</Link><a href={explorerAddress(DEPLOYMENT.reviewEngine)} target="_blank" rel="noreferrer">Review engine ↗</a></div>
       <div className="room-title"><div><div className="eyebrow">{spec?.baseline_ref || review.spec_id} → {review.candidate_version}</div><h1>{review.spec_id}</h1><div className="commit">candidate {review.candidate_commit}</div></div><span className={`status-chip ${review.outcome.toLowerCase()}`}>{review.outcome}</span></div>
       <div className="stage-rail"><div className="stage done">01 FROZEN</div><div className="stage done">02 EVIDENCE</div><div className="stage done">03 CONSENSUS</div><div className={`stage ${hasFinality ? "done" : "active"}`}>04 FINALITY</div><div className={`stage ${hasFinality ? "done" : ""}`}>05 RELEASE</div></div>
