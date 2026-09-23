@@ -41,7 +41,7 @@ The remaining 7% is operational: no video artifact, no RPC-exposed fee profile, 
 
 ## 5. Test results
 
-- `pytest -q`: **26 passed**, 0 failed.
+- `pytest -q`: **28 passed**, 0 failed.
 - All three contract lint checks and schema generation pass.
 - `cd web && npm ci`: passed.
 - `npm run typecheck`: passed.
@@ -70,3 +70,5 @@ Studionet transaction objects inspected for deployment, freeze, review, and chil
 ## 8. Submission conclusion
 
 An external reviewer can clone the repository, install dependencies, run tests/build, inspect the manifest, replay the immutable evidence commit, inspect explorer records, and open the verified Vercel deployment. The remaining limitations are explicit and do not change the verified positive/negative authorization behavior.
+
+The separate full lifecycle trace, including the distinction between implemented and non-existent remediation/proof stages, is in [FULL_LIFECYCLE_AUDIT_REPORT.md](FULL_LIFECYCLE_AUDIT_REPORT.md).
