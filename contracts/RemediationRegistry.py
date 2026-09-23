@@ -68,8 +68,10 @@ class RemediationRegistry(gl.Contract):
         baseline = _bounded(baseline_ref, "baseline_ref", 1, 160)
 
         try:
-            policy = json.loads(evidence_policy_json)
-            origins = json.loads(allowed_origins_json)
+            # SDK clients may preserve these ABI values as JSON strings, while
+            # the CLI conveniently decodes JSON-looking arguments first.
+            policy = evidence_policy_json if isinstance(evidence_policy_json, dict) else json.loads(evidence_policy_json)
+            origins = allowed_origins_json if isinstance(allowed_origins_json, list) else json.loads(allowed_origins_json)
         except Exception:
             raise gl.vm.UserError("policy/origins must be valid JSON")
 
