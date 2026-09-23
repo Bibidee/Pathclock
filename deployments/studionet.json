@@ -3,33 +3,38 @@
   "chainId": 61999,
   "rpc": "https://studio.genlayer.com/api",
   "explorer": "https://explorer-studio.genlayer.com",
-  "sourceCommit": "556afcd0ebdd2ff4153b0aa2502c9e4265b9fea1",
-  "deployedAt": null,
+  "sourceCommit": "b511b057fcdaf46c161a767c76431925029affe8",
+  "deployedAt": "2026-09-23",
   "contracts": {
     "RemediationRegistry": {
-      "address": "0xaB74Da9C0124101e8c89428318b417272Ac4a464",
-      "deployTx": "0xb92cabe56efa5e0b15a44f91f96010d1daf0785da4b1ecad8825aebdb88c7dd6"
+      "address": "0xB3d62b86B191973Db48FD3571a2ff5E59F846e28",
+      "deployTx": "0xe6d957eb3c671e3b77e831f84571b605b6b55a4f34016afaa59bf20c5197be39"
     },
     "ReleaseAuthority": {
-      "address": "0xF0391b242a15F259918752B22B9F6CA2B359e5Fe",
-      "deployTx": "0x6bb026a9e1150d18ab2b4de7fbbc1bd14998af55150e420465408e37384f4c36"
+      "address": "0x95E5445aA3Cc026889B024DecF2AA54B116dABeb",
+      "deployTx": "0x96081b17098af78eec8edc13f3c20b09b52be75b8166fe294271d67f76b48f51"
     },
     "PatchReviewEngine": {
-      "address": "0xe2193869cb366fDdEdAE0C54ccAe03f708ec7b28",
-      "deployTx": "0x0fa1389f9fa610011855dfcc7fe862e6282243cef0d19d2a4d91e7b65f034af7"
+      "address": "0x496ef0315E3E4ac5810B7E1cB6045e1FEa6501Cf",
+      "deployTx": "0x2d538c1fd7a7953584bacf37855436b8e0a733e11724fed5c2b5ec213271e7d3"
     }
   },
   "binding": {
-    "configureReviewEngineTx": "0xe3e064dfaa1c481889b7492a00c782828cbc24a78dcf30a4cd71c3983c724745"
+    "configureReviewEngineTx": "0x0df8aac9654fe2b465e9194678e05686d0030768655cfc7b1fc0ef210e0041f7"
   },
   "canonicalProof": {
-    "specId": "pc-2026-001",
-    "reviewKey": "positive-2026-001",
-    "reviewTx": "0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07",
-    "finalizeTx": "0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07",
-    "authorizationChildTx": "0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30",
-    "negativeReviewTx": "0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb"
+    "specId": "pc-2026-b511",
+    "freezeTx": "0x2c6c37db21e629150f25e00e87089b81d71a8fe1f13389fcb4019da1b3629a0c",
+    "reviewKey": "positive-2026-b511-001",
+    "reviewTx": "0xf692ffc18d720f0ba57c227c70033cc1bf64ec388b69b7ca4a199a769d107b8a",
+    "finalizeTx": "0xf692ffc18d720f0ba57c227c70033cc1bf64ec388b69b7ca4a199a769d107b8a",
+    "authorizationChildTx": "0x3dc23ab330b7b66f2c66ffeedba9352689e4369d67e6d1f4e0a315f00b217a36",
+    "receiptKey": "11fc2ae18cd2193cf9c834952884a95cbc718f3f1279ac4dc7d1050822a85375",
+    "negativeReviewKey": "inconclusive-2026-b511-001",
+    "negativeReviewTx": "0xe974c7532f6d7335e7c405a5524a588a3ce37050dfb9d5b9983a5fee8ff8596e",
+    "disallowedOriginReviewKey": "disallowed-origin-2026-b511-001",
+    "disallowedOriginTx": "0xd15a41e6fc6b7aa825ca935243f309ebffc1c28abad8cecfc97dabb0a30e99e4"
   },
-  "releaseStatus": "historical deployment only; contract source changes in the current working tree require a fresh complete deployment and new proofs before these addresses can represent the source",
-  "currentSourceVerifiedOnChain": false
+  "releaseStatus": "fresh deployment from source commit b511b057fcdaf46c161a767c76431925029affe8; positive authorization and no-authorization cases verified by public state reads",
+  "currentSourceVerifiedOnChain": true
 }

@@ -66,11 +66,11 @@ npm run build
 npm run dev
 ```
 
-The frontend builds even before live addresses are filled, but contract writes/reads are intentionally blocked with a clear configuration message until deployment addresses are supplied. The checked-in manifest contains historical Studionet addresses for the older contract source; because this working-tree pass changes contracts, do not use those addresses as a deployment of the current source. Local/production environment files must be updated only after a fresh deployment.
+The frontend builds even before live addresses are filled, but contract reads/writes are intentionally blocked with a clear configuration message until deployment addresses are supplied. The checked-in [`deployments/studionet.json`](deployments/studionet.json) records the fresh deployment from contract-source commit `b511b057fcdaf46c161a767c76431925029affe8`; do not replace these addresses without a fresh deployment.
 
 ## Deployment
 
-The verified Studionet deployment is recorded in `deployments/studionet.json`. It was made with an unlocked funded account on chain 61999; do not replace those addresses without redeploying and updating the manifest.
+The verified Studionet deployment is recorded in `deployments/studionet.json`. It was made with an unlocked funded account on chain 61999; deployment and proof transactions are linked there. Do not replace those addresses without redeploying and updating the manifest.
 
 Use:
 
@@ -105,4 +105,4 @@ to generate immutable raw evidence URLs for the live proof. Replace the deployme
 
 ## Build verification performed in this handoff
 
-The latest local pass on this working tree is `pytest -q` (77 passed), Python byte-compilation, `npm ci`, `npm run typecheck`, and `npm run build`. All three contracts pass GenVM AST lint and SDK-backed validation using cached GenVM `v0.6.0-rc6`; the linter notes a newer runner is available. This release pass changes contract sources, so the historical addresses and proofs in `deployments/studionet.json` are not proofs of this source. A fresh three-contract deployment, binding, new live proofs, current GitHub CI, and a Vercel deploy of this commit remain required. GitHub CLI authentication is invalid. Vercel CLI is authenticated, but the requested `pathlock.vercel.app` domain is not accessible under the linked Vercel account; the existing project alias is `pathlock-rho.vercel.app`. No measured transaction fee profile is claimed; the owner wallet is the final fee quote before signing.
+The verified checks for contract-source commit `b511b057fcdaf46c161a767c76431925029affe8` are `pytest -q` (77 passed), Python byte-compilation, `npm ci`, `npm run typecheck`, `npm run build`, and GenVM lint/SDK-backed validation for all three contracts using GenVM `v0.6.0-rc6` (newer-runner advisory only). GitHub Actions run [35918896660](https://github.com/Bibidee/Pathclock/actions/runs/35918896660) passed. Live Studionet deployment, positive finality/authorization, inconclusive no-authorization, and private-origin rejection are documented in the manifest and [`FINAL_AUDIT_REPORT.md`](FINAL_AUDIT_REPORT.md). Vercel production variables have been updated to the live contract addresses, but a fresh production deployment and public route/proof-page verification remain pending. The linked account’s existing alias is `pathlock-rho.vercel.app`; the requested `pathlock.vercel.app` domain is inaccessible to this team. No measured fee profile is claimed; the wallet remains the final fee quote before signing.
