@@ -13,11 +13,13 @@ This handoff contains the complete product architecture, three GenLayer contract
 - Positive review: `0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07` → `REMEDIATED`
 - Authorization child: `0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30` → finalized successfully
 - Negative/inconclusive review: `0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb` → `INCONCLUSIVE`, no authorization requested
-- Requested Vercel URL: https://pathlock.vercel.app (currently returns 404; deployment remains unverified after a Vercel API/DNS failure)
+- Vercel production: https://pathlock-rho.vercel.app (READY)
+- Vercel inspection: https://vercel.com/bibidees-projects/pathlock/6E3jHbcHQqXLjEKSbjssJRdeTR5s
+- Requested alias: https://pathlock.vercel.app (already in use by another Vercel project and could not be assigned)
 
 The following items cannot truthfully be marked complete from this environment:
 
 - measured fee profile (the Studionet RPC transaction objects expose no gas-price/fee fields for these transactions);
-- Vercel production deployment at `pathlock.vercel.app`.
+- Assignment of the exact `pathlock.vercel.app` alias; the authenticated project is live at `pathlock-rho.vercel.app`.
 
 The verified deployment addresses, transaction hashes, proof hashes, and source commit are recorded in `deployments/studionet.json`. The official unit and Direct Mode suites now pass after correcting the contract timestamp API and applying a local compatibility tolerance to the installed Windows test loader.
