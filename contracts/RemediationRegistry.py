@@ -1,0 +1,130 @@
+# { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
+"""PATHCLOCK immutable remediation specification registry."""
+
+import hashlib
+import json
+import datetime
+from genlayer import *
+
+
+def _require(condition: bool, message: str) -> None:
+    if not condition:
+        raise gl.vm.UserError(message)
+
+
+def _bounded(value: str, field: str, minimum: int, maximum: int) -> str:
+    clean = value.strip()
+    _require(len(clean) >= minimum, f"{field} too short")
+    _require(len(clean) <= maximum, f"{field} too long")
+    return clean
+
+
+def _https_url(value: str, field: str) -> str:
+    clean = _bounded(value, field, 12, 800)
+    _require(clean.startswith("https://"), f"{field} must use https")
+    _require("@" not in clean.split("/", 3)[2], f"{field} credentials not allowed")
+    host = clean.split("/", 3)[2].lower()
+    _require(host not in ("localhost", "127.0.0.1", "0.0.0.0", "::1"), f"{field} local host not allowed")
+    _require(not host.startswith("10."), f"{field} private host not allowed")
+    _require(not host.startswith("192.168."), f"{field} private host not allowed")
+    _require(not host.startswith("172.") or not 16 <= int(host.split(".")[1]) <= 31, f"{field} private host not allowed")
+    return clean
+
+
+def _canonical_json(data: dict) -> str:
+    return json.dumps(data, sort_keys=True, separators=(",", ":"))
+
+
+def _digest(data: dict) -> str:
+    return hashlib.sha256(_canonical_json(data).encode("utf-8")).hexdigest()
+
+
+class RemediationRegistry(gl.Contract):
+    specs: TreeMap[str, str]
+    spec_ids_json: str
+    spec_count: u256
+
+    def __init__(self):
+        self.specs = TreeMap()
+        self.spec_ids_json = "[]"
+        self.spec_count = u256(0)
+
+    @gl.public.write
+    def freeze_spec(
+        self,
+        spec_id: str,
+        repository_url: str,
+        advisory_url: str,
+        security_requirement: str,
+        baseline_ref: str,
+        evidence_policy_json: str,
+        allowed_origins_json: str,
+    ) -> str:
+        sid = _bounded(spec_id, "spec_id", 4, 96)
+        _require(sid not in self.specs, "spec already exists")
+        repo = _https_url(repository_url, "repository_url")
+        advisory = _https_url(advisory_url, "advisory_url")
+        requirement = _bounded(security_requirement, "security_requirement", 24, 4000)
+        baseline = _bounded(baseline_ref, "baseline_ref", 1, 160)
+
+        try:
+            policy = json.loads(evidence_policy_json)
+            origins = json.loads(allowed_origins_json)
+        except Exception:
+            raise gl.vm.UserError("policy/origins must be valid JSON")
+
+        _require(isinstance(policy, dict), "evidence policy must be an object")
+        _require(isinstance(origins, list), "allowed origins must be an array")
+        _require(1 <= len(origins) <= 8, "allowed origins must contain 1-8 entries")
+
+        normalized_origins = []
+        for origin in origins:
+            _require(isinstance(origin, str), "origin must be a string")
+            o = _https_url(origin.rstrip("/"), "allowed_origin")
+            o = "https://" + o.split("/", 3)[2].lower()
+            # Origins must not contain a path beyond the host.
+            _require(o.count("/") == 2, "allowed_origin must be an https origin without path")
+            if o not in normalized_origins:
+                normalized_origins.append(o)
+        _require(len(normalized_origins) == len(origins), "duplicate allowed origin")
+
+        record = {
+            "spec_id": sid,
+            "owner": str(gl.message.sender_address),
+            "repository_url": repo,
+            "advisory_url": advisory,
+            "security_requirement": requirement,
+            "baseline_ref": baseline,
+            "evidence_policy": policy,
+            "allowed_origins": normalized_origins,
+            "frozen_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        }
+        record["spec_digest"] = _digest(record)
+
+        self.specs[sid] = _canonical_json(record)
+        ids = json.loads(self.spec_ids_json)
+        ids.append(sid)
+        self.spec_ids_json = json.dumps(ids, separators=(",", ":"))
+        self.spec_count = u256(int(self.spec_count) + 1)
+        return record["spec_digest"]
+
+    @gl.public.view
+    def get_spec(self, spec_id: str) -> str:
+        return self.specs.get(spec_id, "")
+
+    @gl.public.view
+    def list_specs(self, offset: int = 0, limit: int = 30) -> str:
+        ids = json.loads(self.spec_ids_json)
+        start = max(0, int(offset))
+        size = max(0, min(int(limit), 50))
+        selected = ids[start : start + size]
+        return _canonical_json({
+            "items": [json.loads(self.specs[sid]) for sid in selected],
+            "total": len(ids),
+            "offset": start,
+            "limit": size,
+        })
+
+    @gl.public.view
+    def get_stats(self) -> str:
+        return _canonical_json({"specs": int(self.spec_count)})
