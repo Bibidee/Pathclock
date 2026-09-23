@@ -3,31 +3,31 @@
   "chainId": 61999,
   "rpc": "https://studio.genlayer.com/api",
   "explorer": "https://explorer-studio.genlayer.com",
-  "sourceCommit": "1f80e1cca105629519cdef85da9b32bbb894bc6d",
+  "sourceCommit": "556afcd0ebdd2ff4153b0aa2502c9e4265b9fea1",
   "deployedAt": null,
   "contracts": {
     "RemediationRegistry": {
-      "address": "0x005903F060fFa694CD3B790416AC986AF7BedDA3",
-      "deployTx": "0x4aea66666bbe7f2ffe8959534996d3e5093995569e805e9bd48d21bbe76374d7"
+      "address": "0xaB74Da9C0124101e8c89428318b417272Ac4a464",
+      "deployTx": "0xb92cabe56efa5e0b15a44f91f96010d1daf0785da4b1ecad8825aebdb88c7dd6"
     },
     "ReleaseAuthority": {
-      "address": "0x6c818b66917b9cfeee2c101FFfb444D6348106A5",
-      "deployTx": "0xc2514680bd514d51ce043223a6ce9ba80f38f20db8978a207efd174d783ca138"
+      "address": "0xF0391b242a15F259918752B22B9F6CA2B359e5Fe",
+      "deployTx": "0x6bb026a9e1150d18ab2b4de7fbbc1bd14998af55150e420465408e37384f4c36"
     },
     "PatchReviewEngine": {
-      "address": "0xE74c7325d1f2b5b8b2B8cF622dDC678B13aB871A",
-      "deployTx": "0xdd0369a852334093dd63b70db89c10979d48d6655ae94e5ae90d6ed50dadc061"
+      "address": "0xe2193869cb366fDdEdAE0C54ccAe03f708ec7b28",
+      "deployTx": "0x0fa1389f9fa610011855dfcc7fe862e6282243cef0d19d2a4d91e7b65f034af7"
     }
   },
   "binding": {
-    "configureReviewEngineTx": "0x1f35043c2eed05437523a1c782c662c19999b796865d72906bedc2ee6092c64a"
+    "configureReviewEngineTx": "0xe3e064dfaa1c481889b7492a00c782828cbc24a78dcf30a4cd71c3983c724745"
   },
   "canonicalProof": {
-    "specId": "",
-    "reviewKey": "",
-    "reviewTx": "",
-    "finalizeTx": "",
-    "authorizationChildTx": "",
-    "negativeReviewTx": ""
+    "specId": "pc-2026-001",
+    "reviewKey": "positive-2026-001",
+    "reviewTx": "0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07",
+    "finalizeTx": "0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07",
+    "authorizationChildTx": "0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30",
+    "negativeReviewTx": "0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb"
   }
 }

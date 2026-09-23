@@ -8,7 +8,7 @@
     "sha256": "74d79619a2b203bf15f4fc0e4bf4e81af369f78ca7bcf3995d054c7df1f6a544"
   },
   "contracts/RemediationRegistry.py": {
-    "bytes": 4901,
-    "sha256": "09e66eb36d52ab5fc6c01f0a7b73aae748f4b8eb7c6d299d548ed9eee305b3dc"
+    "bytes": 5189,
+    "sha256": "5caebe853bf53b9238656bb4c7a3df72d3a343b38b75a8134c94a457ae1dff06"
   }
 }
