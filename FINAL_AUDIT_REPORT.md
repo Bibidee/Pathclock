@@ -46,7 +46,7 @@ The remaining 7% is operational: no video artifact, no RPC-exposed fee profile, 
 - `cd web && npm ci`: passed.
 - `npm run typecheck`: passed.
 - `npm run build`: passed with Next.js 16.3.6.
-- GitHub CI: [successful run](https://github.com/Bibidee/Pathclock/actions/runs/35803346861).
+- GitHub CI for the pushed audit commit: [successful run](https://github.com/Bibidee/Pathclock/actions/runs/35842300651).
 
 ## 6. Deployment verification
 
