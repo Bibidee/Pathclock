@@ -13,8 +13,8 @@ This handoff contains the complete product architecture, three GenLayer contract
 - Positive review: `0xa0273714547f14e23e2692f6870b6f9c8c9af98be57a98ff324b07b7464f1f07` → `REMEDIATED`
 - Authorization child: `0x18a072ab1d5a7befef670df7fc7e1d004c46cca79c95caf9a3143fd9b24f1a30` → finalized successfully
 - Negative/inconclusive review: `0x744529f0d51726b481e77501f1114c56faa7feca2ce3e6638cba4b900e61b0bb` → `INCONCLUSIVE`, no authorization requested
-- Vercel production: https://pathlock-rho.vercel.app (READY)
-- Vercel inspection: https://vercel.com/bibidees-projects/pathlock/6E3jHbcHQqXLjEKSbjssJRdeTR5s
+- Vercel production: https://pathlock-rho.vercel.app (READY; HTTP 200 verified)
+- Vercel inspection: https://vercel.com/bibidees-projects/pathlock/4iXatEdysHUbWteCnj3F6LvuDy89
 - Requested alias: https://pathlock.vercel.app (already in use by another Vercel project and could not be assigned)
 
 The following items cannot truthfully be marked complete from this environment:
