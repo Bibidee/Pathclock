@@ -35,6 +35,6 @@ Transaction hashes and contract addresses are in [`deployments/studionet.json`](
 
 ## Pending external verification
 
-Vercel deployment `dpl_3KixukgcDkaenUG5HfNHPtqajc9n` is READY at [pathlock-rho.vercel.app](https://pathlock-rho.vercel.app). All four public routes return HTTP 200; the GenLayer SDK read path used by the app successfully retrieved the canonical review and authorization payload. The earlier proof-page `Failed to fetch` did not recur in these checks, although transient RPC failures remain possible. The exact `pathlock.vercel.app` alias is inaccessible to the linked team. No consume transaction or measured fee profile is claimed; no interactive visual browser check was performed.
+Vercel deployment `dpl_3KixukgcDkaenUG5HfNHPtqajc9n` is READY at [the-pathlock.vercel.app](https://the-pathlock.vercel.app). All four public routes return HTTP 200; the GenLayer SDK read path used by the app successfully retrieved the canonical review and authorization payload. The earlier proof-page `Failed to fetch` did not recur in these checks, although transient RPC failures remain possible. The former `pathlock-rho.vercel.app` alias has been removed. No consume transaction or measured fee profile is claimed; no interactive visual browser check was performed.
 
 The one-time administrator configuration, mutable evidence hosting, off-chain consensus/provider availability, and wallet/RPC availability remain trust assumptions. The canonical positive authorization was deliberately preserved unconsumed.

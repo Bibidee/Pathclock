@@ -8,9 +8,9 @@ Contract-source commit: `b511b057fcdaf46c161a767c76431925029affe8`
 
 The two contract fixes are committed, pushed, and passed GitHub Actions. A fresh Studionet deployment from that source is finalized and correctly bound. A positive review finalized as `REMEDIATED`, its finality-triggered authorization child finalized, and a public read confirmed the authorization receipt. An unavailable-evidence review finalized as `INCONCLUSIVE`; a public authority read returned no record. A localhost/private-origin submission finalized at consensus level but its contract execution returned `ERROR`, with no review or authorization record. This is the expected rejection, not an accepted review.
 
-The web app is deployed and READY on the project’s accessible production alias, `pathlock-rho.vercel.app`. All four public routes return HTTP 200, and the same GenLayer SDK/RPC configuration used by the web client successfully reads the finalized review and matching authorization for the public proof. The requested `pathlock.vercel.app` hostname remains inaccessible to the linked Vercel account. No measured fee profile is claimed.
+The web app is deployed and READY at the exact requested hostname, `the-pathlock.vercel.app`. All four public routes return HTTP 200, and the same GenLayer SDK/RPC configuration used by the web client successfully reads the finalized review and matching authorization for the public proof. The unwanted `pathlock-rho.vercel.app` alias has been removed. No measured fee profile is claimed.
 
-**Submission readiness: 92% — ready to demonstrate using `pathlock-rho.vercel.app`; requested custom alias remains unavailable.** The app’s in-browser rendered state was not visually exercised in this CLI-only pass; route responses and its SDK/RPC proof data were checked independently.
+**Submission readiness: 95% — ready to demonstrate at `the-pathlock.vercel.app`.** The app’s in-browser rendered state was not visually exercised in this CLI-only pass; route responses and its SDK/RPC proof data were checked independently.
 
 ## Before and after
 
@@ -58,8 +58,7 @@ Evidence fixture is pinned to immutable source commit `b511b057fcdaf46c161a767c7
 
 ## Deployment status and remaining risk
 
-- Requested website domain: [pathlock.vercel.app](https://pathlock.vercel.app) is not accessible under the linked Vercel account. Do not claim it as the app URL unless domain access/assignment is fixed.
-- Verified production alias: [pathlock-rho.vercel.app](https://pathlock-rho.vercel.app). Deployment `dpl_3KixukgcDkaenUG5HfNHPtqajc9n` is READY; it was built from web source SHA `8e33b82214b89581a79c7bc5ade4a60cc7b85398`. The deployment inspection page is [Vercel deployment details](https://vercel.com/bibidees-projects/pathlock/3KixukgcDkaenUG5HfNHPtqajc9n).
+- Verified production URL: [the-pathlock.vercel.app](https://the-pathlock.vercel.app). Deployment `dpl_3KixukgcDkaenUG5HfNHPtqajc9n` is READY; it was built from web source SHA `8e33b82214b89581a79c7bc5ade4a60cc7b85398`. The deployment inspection page is [Vercel deployment details](https://vercel.com/bibidees-projects/pathlock/3KixukgcDkaenUG5HfNHPtqajc9n). The prior `pathlock-rho.vercel.app` alias was removed after verifying the requested hostname.
 - HTTP 200 verified for `/`, `/console`, `/release/positive-2026-b511-001`, and `/proof/11fc2ae18cd2193cf9c834952884a95cbc718f3f1279ac4dc7d1050822a85375`. The frontend’s GenLayer SDK read path returned the expected finalized review and authorization payload. No interactive visual browser check was performed.
 - The prior public-proof `Failed to fetch` was not reproduced in the refreshed route/SDK checks; transient RPC/network failures remain possible.
 - Fees: no measured fee profile is available from the transaction records used here; the connected wallet is the final source for fee presentation.
@@ -67,4 +66,4 @@ Evidence fixture is pinned to immutable source commit `b511b057fcdaf46c161a767c7
 
 ## Final decision
 
-Contract, tests, CI, Vercel production build, route responses, and SDK-backed proof reads: verified. Submission is **ready for demonstration at `pathlock-rho.vercel.app`**. The exact requested `pathlock.vercel.app` hostname is not assigned or controlled by the linked Vercel team and must not be represented as the live app. No measured fee or live consumption claim is made.
+Contract, tests, CI, Vercel production build, route responses, and SDK-backed proof reads: verified. Submission is **ready for demonstration at [the-pathlock.vercel.app](https://the-pathlock.vercel.app)**. The unwanted former hostname alias has been removed. No measured fee or live consumption claim is made.

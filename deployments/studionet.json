@@ -26,7 +26,7 @@
     "provider": "Vercel",
     "sourceCommit": "8e33b82214b89581a79c7bc5ade4a60cc7b85398",
     "deploymentId": "dpl_3KixukgcDkaenUG5HfNHPtqajc9n",
-    "url": "https://pathlock-rho.vercel.app",
+    "url": "https://the-pathlock.vercel.app",
     "deploymentUrl": "https://pathlock-3arosdvow-bibidees-projects.vercel.app",
     "inspectionUrl": "https://vercel.com/bibidees-projects/pathlock/3KixukgcDkaenUG5HfNHPtqajc9n",
     "status": "READY",
@@ -36,7 +36,8 @@
       "/release/positive-2026-b511-001": 200,
       "/proof/11fc2ae18cd2193cf9c834952884a95cbc718f3f1279ac4dc7d1050822a85375": 200
     },
-    "requestedAliasAvailable": false
+    "requestedAliasAvailable": true,
+    "formerAliasRemoved": "pathlock-rho.vercel.app"
   },
   "canonicalProof": {
     "specId": "pc-2026-b511",

@@ -16,12 +16,11 @@
 - [x] Inconclusive review confirmed no authorization; private-origin contract execution fails and creates no review/authorization.
 - [x] Public fixture URLs are pinned to the immutable source commit.
 - [x] No client-side secrets are required; contract addresses are public configuration.
-- [x] Vercel production build is READY at [pathlock-rho.vercel.app](https://pathlock-rho.vercel.app), with the fresh public contract addresses.
+- [x] Vercel production build is READY at [the-pathlock.vercel.app](https://the-pathlock.vercel.app), with the fresh public contract addresses.
 - [x] Home, console, review, and proof routes return HTTP 200; the app’s GenLayer SDK/RPC read path returned the expected positive review and authorization.
 
 ## Pending before submission
 
-- [ ] Assign the requested `pathlock.vercel.app` hostname to the Vercel project; it is currently inaccessible to the linked account. Until then, use only the verified `pathlock-rho.vercel.app` URL.
 
 ## Explicit limitations
 
@@ -29,4 +28,4 @@
 - Canonical positive authorization is intentionally left unconsumed; no live consumption transaction is claimed.
 - Single admin controls one-time engine configuration; no multisig or timelock is implemented.
 - Browser-based visual rendering was not checked; production routes and direct GenLayer SDK/RPC proof data were verified separately.
-- Submission is ready to demonstrate at `pathlock-rho.vercel.app`; exact custom-hostname assignment remains the sole external release caveat.
+- Submission is ready to demonstrate at `the-pathlock.vercel.app`; the former `pathlock-rho.vercel.app` alias was removed.
