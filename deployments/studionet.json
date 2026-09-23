@@ -3,7 +3,7 @@
   "chainId": 61999,
   "rpc": "https://studio.genlayer.com/api",
   "explorer": "https://explorer-studio.genlayer.com",
-  "sourceCommit": null,
+  "sourceCommit": "1f80e1cca105629519cdef85da9b32bbb894bc6d",
   "deployedAt": null,
   "contracts": {
     "RemediationRegistry": {
